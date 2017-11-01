@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script src="./phaser.min.js"></script>
+  <script>
+    // 因为手机端 webGL 支持不够好， 所以第三个参数不选择 AUTO， 直接固定为 CANVAS
+    var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'app', {
+      preload: preload,
+      create: create,
+      update: update
+    });
+
+    function preload() {
+      // 预加载资源并缓存。
+      game.load.image('sky', 'assets/sky.png');
+      game.load.image('ground', 'assets/platform.png');
+      game.load.image('star', 'assets/star.png');
+      game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    }
+
+    var platforms;
+    var player;
+    var cursors;
+    var stars;
+    var score = 0;
+    var scoreText;
+
+    function create() {
+
+      //  加载物理引擎， https://segmentfault.com/a/1190000009282734
+      game.physics.startSystem(Phaser.Physics.ARCADE);
+
+      //  设置背景，图片顺序按照设计的顺序来，所以背景需要放在第一张
+      game.add.sprite(0, 0, 'sky');
+
+      //  group，实际上可以理解成是一个数组，只不过更形象 组本身也有x,y等属性，也就是说，整个组的成员都可以根据组的偏移值而一起偏移！ 也可以检测不同组的碰撞， 牛逼！
+      platforms = game.add.group();
+
+      //  组内的任何一个对象都可以使用物理引擎
+      platforms.enableBody = true;
+
+      // 创建 ground
+      var ground = platforms.create(0, game.world.height - 64, 'ground');
+
+      //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+      ground.scale.setTo(2, 2);
+
+      //  可以理解为别的物体可以和他做碰撞检测
+      ground.body.immovable = true;
+
+      var ledge = platforms.create(400, 400, 'ground');
+
+      ledge.body.immovable = true;
+
+      ledge = platforms.create(-150, 250, 'ground');
+
+      ledge.body.immovable = true;
+      player = game.add.sprite(100, game.world.height - 150, 'dude');
+
+      game.physics.arcade.enable(player);
+      player.body.bounce.y = 0.2;
+      // 300 为重力系数  越大下降的越快
+      player.body.gravity.y = 300;
+      player.body.collideWorldBounds = true;
+
+      //  分别为向左向右时的动画， 每 10 个单位更新一次， 一次为 0 1 2 3 帧
+      player.animations.add('left', [0, 1, 2, 3], 10, true);
+      player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+      // 星星组
+      stars = game.add.group();
+
+      stars.enableBody = true;
+
+      for (var i = 0; i < 12; i++) {
+        var star = stars.create(i * 70, 0, 'star');
+
+        //  重力
+        star.body.gravity.y = 300;
+
+        //  随机反弹值 反弹值介于 0 ~ 1
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+      }
+
+      // 添加文本
+      scoreText = game.add.text(16, 16, 'score: 0', {
+        fontSize: '32px',
+        fill: '#000'
+      });
+
+      cursors = game.input.keyboard.createCursorKeys();
+
+    }
+
+    function update() {
+
+      //  球员和地板碰撞，不写的话会落到最底部 Physics.collide  检测两个 Object 的碰撞
+      var hitPlatform = game.physics.arcade.collide(player, platforms);
+      game.physics.arcade.collide(stars, platforms);
+
+      //  检测 星星 与 人物 是否碰撞
+      game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+      player.body.velocity.x = 0;
+      if (cursors.left.isDown) {
+        //  Move to the left 控制速度的，而不是往左移 150 根据某种阻尼，可以调大调小试一下
+        player.body.velocity.x = -150;
+        player.animations.play('left');
+      } else if (cursors.right.isDown) {
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+      } else {
+        player.animations.stop();
+        player.frame = 4;
+      }
+
+      //  允许向上按键跳跃
+      if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
+        player.body.velocity.y = -350;
+      }
+    }
+
+
+    function collectStar(player, star) {
+
+      // 去除 star 可以在此继续写计分的逻辑
+      star.kill();
+      score += 10;
+      scoreText.text = 'Score: ' + score;
+    }
+  </script>
+</body>
+
+</html>
