@@ -6,6 +6,8 @@ on:
       - master
   create:
 
+environment: github-pages
+
 jobs:
   mirror:
     runs-on: ubuntu-latest
