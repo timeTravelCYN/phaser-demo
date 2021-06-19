@@ -17,5 +17,5 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
         uses: wearerequired/git-mirror-action@v1
         with:
-          source-repo: 'git@github.com:timeTravelCYN/phaser-demo.git'
-          destination-repo: 'git@gitee.com:timetravelcyn/phaser-demo.git'
+          source-repo: 'https://github.com/timeTravelCYN/phaser-demo.git'
+          destination-repo: 'https://gitee.com/timetravelcyn/phaser-demo.git'
