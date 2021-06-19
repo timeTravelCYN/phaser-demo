@@ -6,6 +6,9 @@ on:
       - master
   create:
 
+environment:
+  name: gitee
+  
 jobs:
   mirror:
     runs-on: ubuntu-latest
@@ -13,7 +16,7 @@ jobs:
     steps:
       - name: mirror
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
         if: (github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')) && env.SSH_PRIVATE_KEY
         uses: wearerequired/git-mirror-action@v1
         with:
