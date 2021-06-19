@@ -219,3 +219,5 @@ Object.keys(states).map(function (key) {
 
 // 启动游戏
 game.state.start('preload');
+
+console.log(123)
