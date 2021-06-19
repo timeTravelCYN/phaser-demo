@@ -9,7 +9,7 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
-    if: github.repository == 'timeTravelCYN/naive-ui'
+    if: github.repository == 'timeTravelCYN/phaser-demo'
     steps:
       - name: mirror
         continue-on-error: true
