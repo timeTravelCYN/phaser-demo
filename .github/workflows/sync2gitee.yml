@@ -12,11 +12,9 @@ jobs:
     if: github.repository == 'timeTravelCYN/phaser-demo'
     steps:
       - name: mirror
-        environment:
-          name: gitee
         env:
           SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
-        if: (github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')) && env.SSH_PRIVATE_KEY
+        if: (github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')) && env.GITEE_SSH_PRIVATE_KEY
         uses: wearerequired/git-mirror-action@v1
         with:
           source-repo: 'git@github.com:timeTravelCYN/phaser-demo.git'
