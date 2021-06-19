@@ -18,4 +18,4 @@ jobs:
         uses: wearerequired/git-mirror-action@v1
         with:
           source-repo: 'https://github.com/timeTravelCYN/phaser-demo.git'
-          destination-repo: 'https://gitee.com/timetravelcyn/phaser-demo.git'
+          destination-repo: 'git@gitee.com:timetravelcyn/phaser-demo.git'
