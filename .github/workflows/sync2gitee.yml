@@ -6,11 +6,10 @@ on:
       - master
   create:
 
-environment: github-pages
-
 jobs:
   mirror:
     runs-on: ubuntu-latest
+    environment: github-pages
     if: github.repository == 'timeTravelCYN/phaser-demo'
     steps:
       - name: mirror
