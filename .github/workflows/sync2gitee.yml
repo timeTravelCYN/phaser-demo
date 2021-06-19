@@ -6,15 +6,14 @@ on:
       - master
   create:
 
-environment:
-  name: gitee
-  
 jobs:
   mirror:
     runs-on: ubuntu-latest
     if: github.repository == 'timeTravelCYN/phaser-demo'
     steps:
       - name: mirror
+        environment:
+          name: gitee
         env:
           SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
         if: (github.event_name == 'push' || (github.event_name == 'create' && github.event.ref_type == 'tag')) && env.SSH_PRIVATE_KEY
